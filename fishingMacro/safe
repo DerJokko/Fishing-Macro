@@ -1,0 +1,70 @@
+function sendRightClickPacket() {
+
+    // Create the packet
+    const packet = new C08PacketPlayerBlockPlacement();
+
+    // Send the packet
+    Client.sendPacket(packet);
+}
+
+const reelIn = register("soundPlay", (position, soundName, volume, pitch, category, event) => {
+    //ChatLib.chat(soundName)
+    if (soundName === "game.player.swim.splash") {
+        ChatLib.chat("A fish is on the hook! Reel it in!");
+        // Simulate a key press to pull the rod
+
+        //setTimeout(() => {
+        //    sendRightClickPacket()
+        //}, 200);
+    }
+}).unregister();
+
+
+
+
+const S19PacketEntityStatus = Java.type("net.minecraft.network.play.server.S19PacketEntityStatus");
+const Bobber = Java.type("net.minecraft.entity.projectile.EntityFishHook")
+
+export const reelIn2 = register("packetReceived", (packet) => {
+    if (!packet.toString().includes("PacketEntity")) return
+	const item = Player.getHeldItem();
+	if (item?.getID() !== 346) return;
+
+    ChatLib.chat("Recieved")
+    //const entity = packet.getEntity(Client.getMinecraft().theWorld); // Get the affected entity
+    const status = packet.getStatus(); // Get the status value
+    ChatLib.chat(status)
+    // Check if the status is 31 (fish bite event)
+    if (status === 31 && entity.getName() === "Fishing Bobber") {
+        ChatLib.chat("Bobber bounced! Fish is biting!");
+        // Perform actions, e.g., send right-click packet
+    }
+
+}).unregister()
+
+
+
+//export const DetectFish = register("step", () => {
+//    World.getAllEntitiesOfType(EntityArmorStand).forEach((fish) => {
+//        let standname = fish.getName()?.removeFormatting()
+//        if (typeof fishingTime === 'undefined') {
+//            fishingTime = Date.now()
+//        }
+//        if (standname === '!!!') {
+//            if (Math.abs(Date.now() - fishingTime) > 2000) {
+//                fishing = false
+//            }
+//            if (!fishing) {
+//                reelIn()
+//            } else {
+//                return
+//            }
+//        }
+//    })
+//    World.getAllEntitiesOfType(EntityFishHook).forEach((Bob) => {
+//        if (Bob.getEntity().field_146042_b == Player.getPlayer()) {
+//            PlayerBobberX = Bob.getX()
+//            PlayerBobberZ = Bob.getZ()
+//        }
+//    })
+//}).setFps(5).unregister()
